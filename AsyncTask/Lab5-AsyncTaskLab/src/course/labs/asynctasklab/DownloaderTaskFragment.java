@@ -27,17 +27,22 @@ public class DownloaderTaskFragment extends Fragment {
 		// Preserve across reconfigurations
 		setRetainInstance(true);
 		
-		// TODO: Create new DownloaderTask that "downloads" data
+		DownloaderTask task = new DownloaderTask();
 
         
 		
 		// TODO: Retrieve arguments from DownloaderTaskFragment
 		// Prepare them for use with DownloaderTask. 
 
+        Bundle args = getArguments();
+        ArrayList<Integer> params = args.getIntegerArrayList(MainActivity.TAG_FRIEND_RES_IDS);
         
+        Integer[] paramsI = new Integer[params.size()];
+        for (int i = 0; i < params.size(); ++i) {
+          paramsI[i] = params.get(i);
+        }
         
-        
-		// TODO: Start the DownloaderTask 
+		task.execute(paramsI);
 		
         
 
@@ -73,20 +78,26 @@ public class DownloaderTaskFragment extends Fragment {
 	// out). Ultimately, it must also pass newly available data back to 
 	// the hosting Activity using the DownloadFinishedListener interface.
 
-//	public class DownloaderTask extends ... {
-	
+	public class DownloaderTask extends AsyncTask<Integer, Void, String[]> {
 
+      @Override
+      protected String[] doInBackground(Integer... params) {
+        return downloadTweets(params);
+      }
+
+      @Override
+      protected void onPostExecute(String[] result) {
+        super.onPostExecute(result);
+        mCallback.notifyDataRefreshed(result);
+      }
+	}
     
     
     
     
-    
-    
-    
-        // TODO: Uncomment this helper method
 		// Simulates downloading Twitter data from the network
 
-        /*
+        
          private String[] downloadTweets(Integer resourceIDS[]) {
 			final int simulatedDelay = 2000;
 			String[] feeds = new String[resourceIDS.length];
@@ -124,7 +135,7 @@ public class DownloaderTaskFragment extends Fragment {
 
 			return feeds;
 		}
-         */
+         
 
 
     
